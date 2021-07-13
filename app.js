@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const usersRouter = require('./routes/user.routers');
+const userRouter = require('./routes/user.routers');
 const authRouter = require('./routes/auth.routers');
 
 const app = express();
@@ -17,7 +17,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 //app.use(express.static(path.join(__dirname, '..', 'public')));
 
-app.use('/api/users', usersRouter);
+app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 
 // app.use('/v1', api);
