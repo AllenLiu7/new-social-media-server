@@ -1,41 +1,39 @@
 const User = require('../models/users.model');
-const bcrypt = require('bcrypt');
+const createError = require('http-errors');
 
 //register new user
-async function httpRegisterUser(req, res) {
+async function httpRegisterUser(req, res, next) {
   try {
-    //if user.email exist, send error
     const user = await User.findOne({ email: req.body.email });
     if (user) {
-      return res.status(400).send('user email exists');
+      return next(createError(400, 'email exists'));
     }
 
     const newUser = await new User(req.body);
     const userInfo = await newUser.save();
+
     return res.status(200).json(userInfo);
   } catch (err) {
-    res.status(500).json(err);
+    return next(createError(500, err));
   }
 }
 
 //login user
-async function httpLoginUser(req, res) {
+async function httpLoginUser(req, res, next) {
   try {
-    //find the user email in the database, if not , send error
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(400).send('wrong username or password');
+      return next(createError(400, 'wrong username or password 1'));
     }
 
-    //check if the password is valid
     const valid = await user.isValidPassword(req.body.password);
-    if (valid) {
-      return res.status(400).send('wrong username or password');
+    if (!valid) {
+      return next(createError(400, 'wrong username or password 2'));
     }
 
     return res.status(200).json(user);
   } catch (err) {
-    res.status(500).json(err);
+    return next(createError(500, err));
   }
 }
 

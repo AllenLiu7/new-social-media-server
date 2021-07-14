@@ -20,10 +20,13 @@ app.use(express.json());
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 
-// app.use('/v1', api);
-
-// app.get('/*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-// });
+//Custom express error handler
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  res.json({
+    status: error.status,
+    message: error.message,
+  });
+});
 
 module.exports = app;
