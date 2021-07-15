@@ -4,7 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const userRouter = require('./routes/user.routers');
 const authRouter = require('./routes/auth.routers');
-
+const postRouter = require('./routes/post.routers');
 const app = express();
 
 app.use(
@@ -19,6 +19,7 @@ app.use(express.json());
 
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/post', postRouter);
 
 //Custom express error handler
 app.use((error, req, res, next) => {

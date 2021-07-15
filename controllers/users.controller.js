@@ -1,4 +1,3 @@
-const { findByIdAndUpdate } = require('../models/users.model');
 const User = require('../models/users.model');
 const createError = require('http-errors');
 
