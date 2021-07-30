@@ -7,11 +7,7 @@ const authRouter = require('./routes/auth.routers');
 const postRouter = require('./routes/post.routers');
 const app = express();
 
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-  })
-);
+app.use(cors());
 app.use(morgan('combined'));
 
 app.use(express.json());

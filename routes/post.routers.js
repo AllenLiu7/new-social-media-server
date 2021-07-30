@@ -18,8 +18,8 @@ postRouter.put('/:id/like', httpLikePost);
 //delete a post
 postRouter.delete('/:id/delete', httpDeletePost);
 //get currentUser's posts
-postRouter.get('/', httpCurrentUserPosts);
+postRouter.get('/timeline/:userId', httpCurrentUserPosts);
 //get following's posts
-postRouter.get('/followings', httpFollowingPosts);
+postRouter.get('/followings/:userId', httpFollowingPosts);
 
 module.exports = postRouter;

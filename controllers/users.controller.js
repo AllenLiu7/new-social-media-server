@@ -60,8 +60,19 @@ async function httpUnfollowUser(req, res, next) {
   }
 }
 
-//get current user's followers
 //get current user's following users
+async function httpGetFollowings(req, res, next) {
+  try {
+    const { followings } = await User.findOne({ _id: req.params.id });
+    const followingUsersInfo = await User.find({ _id: { $in: followings } });
+    res.status(200).json(followingUsersInfo);
+  } catch (err) {
+    return next(createError(500, err));
+  }
+}
+
+//get current user's followers
+
 //delete user
 //update user
 
@@ -69,4 +80,5 @@ module.exports = {
   httpGetUser,
   httpFollowUser,
   httpUnfollowUser,
+  httpGetFollowings,
 };

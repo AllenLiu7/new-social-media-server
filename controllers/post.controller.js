@@ -54,20 +54,20 @@ async function httpDeletePost(req, res, next) {
   }
 }
 
-//get currentUser's posts (/post)
+//get currentUser's posts (/post/timeline/:userId)
 async function httpCurrentUserPosts(req, res, next) {
   try {
-    const posts = await Post.find({ userId: req.body.userId });
+    const posts = await Post.find({ userId: req.params.userId });
     res.status(200).json(posts);
   } catch (err) {
     next(creatError(500, err));
   }
 }
 
-//get following posts (/post/following)
+//get following posts (/post/following/:userId)
 async function httpFollowingPosts(req, res, next) {
   try {
-    const currentUser = await User.findOne({ _id: req.body.userId });
+    const currentUser = await User.findOne({ _id: req.params.userId });
     const followingUsers = currentUser.followings;
     const posts = await Post.find({ userId: { $in: followingUsers } });
     res.status(200).json(posts);
