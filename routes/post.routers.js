@@ -6,7 +6,7 @@ const {
   httpDeletePost,
   httpUpdatePost,
   httpCurrentUserPosts,
-  httpFollowingPosts,
+  httpTimelinePosts,
 } = require('../controllers/post.controller');
 
 //create new post
@@ -18,8 +18,8 @@ postRouter.put('/:id/like', httpLikePost);
 //delete a post
 postRouter.delete('/:id/delete', httpDeletePost);
 //get currentUser's posts
-postRouter.get('/timeline/:userId', httpCurrentUserPosts);
-//get following's posts
-postRouter.get('/followings/:userId', httpFollowingPosts);
+postRouter.get('/profile/:userId', httpCurrentUserPosts);
+//get timeline posts
+postRouter.get('/timeline/:userId', httpTimelinePosts);
 
 module.exports = postRouter;

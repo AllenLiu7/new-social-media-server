@@ -1,8 +1,8 @@
 const User = require('../models/users.model');
 const createError = require('http-errors');
 
-//get current user
-async function httpGetUser(req, res, next) {
+//get current user (/users/:id)
+async function httpGetCurrentUser(req, res, next) {
   try {
     const user = await User.findById(req.params.id);
     // if (!user) {
@@ -10,6 +10,23 @@ async function httpGetUser(req, res, next) {
     // }
     const { password, ...other } = user._doc;
     return res.status(200).json(other);
+  } catch (err) {
+    return next(createError(500, err));
+  }
+}
+
+//get a user (/user?userId=${userId} or /user?username=${userame})
+async function httpGetUser(req, res, next) {
+  const userId = req.query.userId;
+  const username = req.query.username;
+
+  try {
+    const user = userId
+      ? await User.findById(userId)
+      : await User.findOne({ username: username });
+
+    const { password, ...others } = user._doc;
+    res.status(200).json(others);
   } catch (err) {
     return next(createError(500, err));
   }
@@ -77,6 +94,7 @@ async function httpGetFollowings(req, res, next) {
 //update user
 
 module.exports = {
+  httpGetCurrentUser,
   httpGetUser,
   httpFollowUser,
   httpUnfollowUser,

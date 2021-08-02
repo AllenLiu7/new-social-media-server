@@ -1,5 +1,6 @@
 const express = require('express');
 const {
+  httpGetCurrentUser,
   httpGetUser,
   httpFollowUser,
   httpUnfollowUser,
@@ -8,7 +9,8 @@ const {
 
 const userRouter = express.Router();
 
-userRouter.get('/:id', httpGetUser);
+userRouter.get('/', httpGetUser);
+userRouter.get('/:id', httpGetCurrentUser);
 userRouter.get('/:id/followings', httpGetFollowings);
 userRouter.put('/:id/follow', httpFollowUser);
 userRouter.put('/:id/unfollow', httpUnfollowUser);

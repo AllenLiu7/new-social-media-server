@@ -54,7 +54,7 @@ async function httpDeletePost(req, res, next) {
   }
 }
 
-//get currentUser's posts (/post/timeline/:userId)
+//get currentUser's posts (/post/profile/:userId)
 async function httpCurrentUserPosts(req, res, next) {
   try {
     const posts = await Post.find({ userId: req.params.userId });
@@ -64,13 +64,14 @@ async function httpCurrentUserPosts(req, res, next) {
   }
 }
 
-//get following posts (/post/following/:userId)
-async function httpFollowingPosts(req, res, next) {
+//get following posts (/post/timeline/:userId)
+async function httpTimelinePosts(req, res, next) {
   try {
     const currentUser = await User.findOne({ _id: req.params.userId });
     const followingUsers = currentUser.followings;
-    const posts = await Post.find({ userId: { $in: followingUsers } });
-    res.status(200).json(posts);
+    const userPosts = await Post.find({ userId: req.params.userId });
+    const followingPosts = await Post.find({ userId: { $in: followingUsers } });
+    res.status(200).json(userPosts.concat(...followingPosts));
   } catch (err) {
     next(createError(500, err));
   }
@@ -82,5 +83,5 @@ module.exports = {
   httpDeletePost,
   httpUpdatePost,
   httpCurrentUserPosts,
-  httpFollowingPosts,
+  httpTimelinePosts,
 };
