@@ -3,12 +3,15 @@ const authRouter = express.Router();
 const {
   httpRegisterUser,
   httpLoginUser,
+  httpCheckUsername,
+  httpCheckEmail,
 } = require('../controllers/auth.controller');
 
 //register user
 authRouter.post('/register', httpRegisterUser);
-authRouter.get('/login', httpLoginUser);
-
+authRouter.post('/login', httpLoginUser);
+authRouter.post('/checkname', httpCheckUsername);
+authRouter.post('/checkemail', httpCheckEmail);
 //login user
 
 //lagout user

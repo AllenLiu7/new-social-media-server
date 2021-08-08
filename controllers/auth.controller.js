@@ -10,9 +10,9 @@ async function httpRegisterUser(req, res, next) {
     }
 
     const newUser = await new User(req.body);
-    const userInfo = await newUser.save();
+    await newUser.save();
 
-    return res.status(200).json(userInfo);
+    return res.status(200).json(newUser);
   } catch (err) {
     return next(createError(500, err));
   }
@@ -37,7 +37,31 @@ async function httpLoginUser(req, res, next) {
   }
 }
 
+//check username is used
+async function httpCheckUsername(req, res, next) {
+  try {
+    const user = await User.findOne({ username: req.body.username });
+    if (user) return res.status(200).json(user.username);
+    res.status(200).json(null);
+  } catch (err) {
+    return next(createError(500, err));
+  }
+}
+
+//check email is exist
+async function httpCheckEmail(req, res, next) {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) return res.status(200).json(user.email);
+    res.status(200).json(null);
+  } catch (err) {
+    return next(createError(500, err));
+  }
+}
+
 module.exports = {
   httpRegisterUser,
   httpLoginUser,
+  httpCheckUsername,
+  httpCheckEmail,
 };
