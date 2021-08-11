@@ -23,15 +23,18 @@ const storage = multer.diskStorage({
     cb(null, 'public/images');
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix);
+    cb(null, req.body.name);
   },
+  // filename: (req, file, cb) => {
+  //   //const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+  //   cb(null, file.originalname);
+  // },
 });
 
 const upload = multer({ storage: storage });
 app.post(
   '/api/post_image',
-  upload.single('uploaded_file'),
+  upload.single('file'),
   function (req, res, next) {
     try {
       return res.status(200).json('File uploded successfully');
