@@ -40,7 +40,9 @@ async function httpLoginUser(req, res, next) {
 //check username is used
 async function httpCheckUsername(req, res, next) {
   try {
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({
+      username: req.body.username,
+    });
     if (user) return res.status(200).json(user.username);
     res.status(200).json(null);
   } catch (err) {
