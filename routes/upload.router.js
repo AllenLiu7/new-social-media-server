@@ -18,7 +18,7 @@ const postImageStorage = multer.diskStorage({
 
 const profilePicStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/assets/profile_pic');
+    cb(null, 'public/assets/profile-pictures');
   },
 
   filename: (req, file, cb) => {
