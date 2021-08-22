@@ -12,7 +12,7 @@ async function httpUploadImage(req, res, next) {
     const oldPath = path.resolve(
       '..',
       'server/public/assets/profile-pictures',
-      currentPic
+      currentProfilePic
     );
 
     fs.unlink(oldPath, (err) => {
