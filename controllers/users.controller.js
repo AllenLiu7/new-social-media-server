@@ -15,6 +15,21 @@ async function httpGetCurrentUser(req, res, next) {
   }
 }
 
+//update currentUser profile
+async function httpUpdateCurrentUser(req, res, next) {
+  const filter = { _id: req.body.id };
+  const update = req.body.profile;
+
+  //update profile info
+  try {
+    const user = await User.findOneAndUpdate(filter, update, { new: true });
+
+    return res.status(200).json(user);
+  } catch (err) {
+    return next(createError(500, err));
+  }
+}
+
 //get a user (/user?userId=${userId} or /user?username=${userame})
 async function httpGetUser(req, res, next) {
   const userId = req.query.userId;
@@ -33,7 +48,6 @@ async function httpGetUser(req, res, next) {
 }
 
 //follow a user
-
 async function httpFollowUser(req, res, next) {
   try {
     //user/:id/follow
@@ -99,4 +113,5 @@ module.exports = {
   httpFollowUser,
   httpUnfollowUser,
   httpGetFollowings,
+  httpUpdateCurrentUser,
 };
