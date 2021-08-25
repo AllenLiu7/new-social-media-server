@@ -1,7 +1,7 @@
 const User = require('../models/users.model');
 const createError = require('http-errors');
 
-//get current user (/users/:id)
+//get current user (/user/:id)
 async function httpGetCurrentUser(req, res, next) {
   try {
     const user = await User.findById(req.params.id);
@@ -10,6 +10,22 @@ async function httpGetCurrentUser(req, res, next) {
     // }
     const { password, ...other } = user._doc;
     return res.status(200).json(other);
+  } catch (err) {
+    return next(createError(500, err));
+  }
+}
+
+//get all unfollowed users (user/:id/recommand_users)
+async function httpGetUnfollowUser(req, res, next) {
+  try {
+    const currentUser = await User.findById(req.params.id);
+    const allUsers = await User.find({ _id: { $ne: req.params.id } });
+    //exclude all currentUser followings
+    const unfollowedUsers = allUsers.filter(
+      (user) => !currentUser.followings.includes(user._id)
+    );
+
+    return res.status(200).json(unfollowedUsers);
   } catch (err) {
     return next(createError(500, err));
   }
@@ -114,4 +130,5 @@ module.exports = {
   httpUnfollowUser,
   httpGetFollowings,
   httpUpdateCurrentUser,
+  httpGetUnfollowUser,
 };

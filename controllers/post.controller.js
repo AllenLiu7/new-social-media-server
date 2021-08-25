@@ -64,7 +64,7 @@ async function httpCurrentUserPosts(req, res, next) {
   }
 }
 
-//get following posts (/post/timeline/:userId)
+//get all related posts (/post/timeline/:userId)
 async function httpTimelinePosts(req, res, next) {
   try {
     const currentUser = await User.findOne({ _id: req.params.userId });
