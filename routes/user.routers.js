@@ -1,4 +1,5 @@
 const express = require('express');
+const { verifyAccessToken } = require('../services/jwt');
 const {
   httpGetCurrentUser,
   httpGetUser,
@@ -12,7 +13,7 @@ const {
 const userRouter = express.Router();
 
 userRouter.get('/', httpGetUser);
-userRouter.get('/:id', httpGetCurrentUser);
+userRouter.get('/:id', verifyAccessToken, httpGetCurrentUser);
 userRouter.get('/:id/followings', httpGetFollowings);
 userRouter.get('/:id/recommand_users', httpGetUnfollowUser);
 userRouter.put('/:id/follow', httpFollowUser);

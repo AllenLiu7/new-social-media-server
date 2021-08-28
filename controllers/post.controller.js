@@ -54,7 +54,7 @@ async function httpDeletePost(req, res, next) {
   }
 }
 
-//get currentUser's posts (/post/profile/:userId)
+//get user's posts (/post/profile/:userId)
 async function httpCurrentUserPosts(req, res, next) {
   try {
     const posts = await Post.find({ userId: req.params.userId });
