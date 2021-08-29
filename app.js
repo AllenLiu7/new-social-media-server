@@ -7,10 +7,9 @@ const userRouter = require('./routes/user.routers');
 const authRouter = require('./routes/auth.routers');
 const postRouter = require('./routes/post.routers');
 const uploadRouter = require('./routes/upload.router');
-const createClient = require('./services/redis');
+require('./services/redis');
 
 const app = express();
-const redisClient = createClient(); //connect to redis and export the client
 
 app.use(cors());
 app.use(morgan('combined'));
@@ -31,4 +30,4 @@ app.use((error, req, res, next) => {
   });
 });
 
-module.exports = { app, redisClient };
+module.exports = app;
