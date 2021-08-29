@@ -4,8 +4,6 @@ const { genAccessToken, genRefreshToken } = require('../services/jwt');
 const createError = require('http-errors');
 const redisClient = require('../app');
 
-let refreshTokenStore = [];
-
 //register new user
 async function httpRegisterUser(req, res, next) {
   try {
@@ -40,7 +38,6 @@ async function httpLoginUser(req, res, next) {
     const accessToken = genAccessToken(user._id);
     //refresh token should be store in db, such as redis
     const refreshToken = genRefreshToken(user._id);
-    refreshTokenStore.push(refreshToken);
 
     const { password, ...others } = user._doc;
 
@@ -50,31 +47,18 @@ async function httpLoginUser(req, res, next) {
   }
 }
 
-//refresh token
+//refresh token (please sent userId as well), will be verify using middleware
 async function httpRefreshToken(req, res, next) {
   try {
-    const refreshToken = req.body.token;
-    if (!refreshToken) return res.status(401).send('No refresh token');
-    if (!refreshTokenStore.includes(refreshToken))
-      return res.status(401).send('Refresh token is not valid');
-    //if token exist, verify it
-    jwt.verify(refreshToken, 'theSecretRefreshKey', (err, payload) => {
-      err && console.log(err);
-      console.log(payload);
-      const { id } = payload;
-      //if verify successfully, delete the token in the store
-      refreshTokenStore = refreshTokenStore.filter((x) => x !== refreshToken);
+    const id = req.body.userId;
+    //generate new access token
+    const newAccessToken = genAccessToken(id);
+    //generate new refresh token which will replace the old one in redis
+    const newRefreshToken = genRefreshToken(id);
 
-      //generate new access token and refresh token to response
-      const newAccessToken = genAccessToken(id);
-      //refresh token should be store in db, such as redis
-      const newRefreshToken = genRefreshToken(id);
-      refreshTokenStore.push(newRefreshToken);
-
-      return res
-        .status(200)
-        .json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
-    });
+    return res
+      .status(200)
+      .json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
   } catch (err) {
     return next(createError(500, err));
   }
