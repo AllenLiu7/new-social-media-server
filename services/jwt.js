@@ -17,14 +17,14 @@ const verifyAccessToken = (req, res, next) => {
   });
 };
 
-const genAccessToken = (user) => {
-  return jwt.sign({ id: user._id }, 'theSecretKey', {
+const genAccessToken = (userId) => {
+  return jwt.sign({ id: userId }, 'theSecretKey', {
     expiresIn: '30s',
   });
 };
 
-const genRefreshToken = (user) => {
-  return jwt.sign({ id: user._id }, 'theSecretRefreshKey', {
+const genRefreshToken = (userId) => {
+  return jwt.sign({ id: userId }, 'theSecretRefreshKey', {
     expiresIn: '15m',
   });
 };

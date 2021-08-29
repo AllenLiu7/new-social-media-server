@@ -37,9 +37,9 @@ async function httpLoginUser(req, res, next) {
     }
 
     //generate access token
-    const accessToken = genAccessToken(user);
+    const accessToken = genAccessToken(user._id);
     //refresh token should be store in db, such as redis
-    const refreshToken = genRefreshToken(user);
+    const refreshToken = genRefreshToken(user._id);
     refreshTokenStore.push(refreshToken);
 
     const { password, ...others } = user._doc;
@@ -58,16 +58,17 @@ async function httpRefreshToken(req, res, next) {
     if (!refreshTokenStore.includes(refreshToken))
       return res.status(401).send('Refresh token is not valid');
     //if token exist, verify it
-    jwt.verify(refreshToken, 'theSecretRefreshKey', (err, user) => {
+    jwt.verify(refreshToken, 'theSecretRefreshKey', (err, payload) => {
       err && console.log(err);
-
+      console.log(payload);
+      const { id } = payload;
       //if verify successfully, delete the token in the store
       refreshTokenStore = refreshTokenStore.filter((x) => x !== refreshToken);
 
       //generate new access token and refresh token to response
-      const newAccessToken = genAccessToken(user);
+      const newAccessToken = genAccessToken(id);
       //refresh token should be store in db, such as redis
-      const newRefreshToken = genRefreshToken(user);
+      const newRefreshToken = genRefreshToken(id);
       refreshTokenStore.push(newRefreshToken);
 
       return res
