@@ -7,6 +7,7 @@ const userRouter = require('./routes/user.routers');
 const authRouter = require('./routes/auth.routers');
 const postRouter = require('./routes/post.routers');
 const uploadRouter = require('./routes/upload.router');
+const cookieParser = require('cookie-parser');
 require('./services/redis');
 
 const app = express();
@@ -14,6 +15,7 @@ const app = express();
 app.use(cors());
 app.use(morgan('combined'));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
