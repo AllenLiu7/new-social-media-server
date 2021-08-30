@@ -2,7 +2,7 @@ const User = require('../models/users.model');
 const jwt = require('jsonwebtoken');
 const { genAccessToken, genRefreshToken } = require('../services/jwt');
 const createError = require('http-errors');
-const redisClient = require('../app');
+const client = require('../services/redis');
 
 //register new user
 async function httpRegisterUser(req, res, next) {
@@ -67,8 +67,17 @@ async function httpRefreshToken(req, res, next) {
 //log out (/logout, clear refresh token)
 async function httpClearToken(req, res, next) {
   try {
-    const refreshToken = req.body.token;
-    refreshTokenStore = refreshTokenStore.filter((x) => x !== refreshToken);
+    const id = req.body.userId;
+
+    //delete refresh token in redis
+    client.del(id.toString(), function (err, response) {
+      if (response == 1) {
+        console.log('Deleted Successfully!');
+      } else {
+        console.log('Cannot delete');
+      }
+    });
+
     return res.status(200).send('user logged out');
   } catch (err) {
     return next(createError(500, err));
