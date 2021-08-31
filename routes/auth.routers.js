@@ -13,11 +13,10 @@ const { verifyRefreshToken } = require('../services/jwt');
 //register user
 authRouter.post('/register', httpRegisterUser);
 authRouter.post('/login', httpLoginUser);
-authRouter.post('refresh');
 authRouter.post('/checkname', httpCheckUsername);
 authRouter.post('/checkemail', httpCheckEmail);
 authRouter.post('/refresh-token', verifyRefreshToken, httpRefreshToken);
-authRouter.post('/logout', httpClearToken);
+authRouter.post('/logout', verifyRefreshToken, httpClearToken);
 
 //lagout user
 
