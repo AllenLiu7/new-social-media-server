@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const client = require('../services/redis');
+const { v4: uuidv4 } = require('uuid');
 
 const verifyAccessToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -8,18 +9,14 @@ const verifyAccessToken = (req, res, next) => {
   if (token == null) return res.status(401).send('No token');
 
   jwt.verify(token, 'theSecretKey', (err, payload) => {
-    console.log(err);
-
     if (err) return res.status(403).send('Token is not valid');
-
-    //req.user = user;
 
     next();
   });
 };
 
 const verifyRefreshToken = (req, res, next) => {
-  const token = req.body.token;
+  const token = req.cookies.refreshToken;
   if (token == null) return res.status(401).send('No token');
 
   try {
@@ -47,6 +44,7 @@ const verifyRefreshToken = (req, res, next) => {
             message: 'Invalid request. Token is not same in store.',
           });
 
+        req.tokenPayload = payload;
         next();
       });
     });
@@ -63,7 +61,8 @@ const genAccessToken = (userId) => {
 };
 
 const genRefreshToken = (userId) => {
-  const refreshToken = jwt.sign({ id: userId }, 'theSecretRefreshKey', {
+  const uuid = uuidv4();
+  const refreshToken = jwt.sign({ id: userId, uuid }, 'theSecretRefreshKey', {
     expiresIn: '15m',
   });
   client.set(userId.toString(), refreshToken, (err, reply) => {
