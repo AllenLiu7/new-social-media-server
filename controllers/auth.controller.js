@@ -1,5 +1,4 @@
 const User = require('../models/users.model');
-const jwt = require('jsonwebtoken');
 const { genAccessToken, genRefreshToken } = require('../services/jwt');
 const createError = require('http-errors');
 const client = require('../services/redis');
@@ -35,30 +34,32 @@ async function httpLoginUser(req, res, next) {
     }
 
     //generate access token
-    const accessToken = genAccessToken(user._id);
+    const accessToken = await genAccessToken(user._id);
     //refresh token should be store in db, such as redis
-    const refreshToken = genRefreshToken(user._id);
+    const refreshToken = await genRefreshToken(user._id);
+
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
     const { password, ...others } = user._doc;
 
-    return res.status(200).json({ user: others, accessToken, refreshToken });
+    return res.status(200).json({ currentUser: others, token: accessToken });
   } catch (err) {
     return next(createError(500, err));
   }
 }
 
-//refresh token (please sent userId as well), will be verify using middleware
+//refresh token (please sent userId), will be verify using middleware
 async function httpRefreshToken(req, res, next) {
   try {
-    const id = req.body.userId;
+    const id = req.tokenPayload.id;
     //generate new access token
-    const newAccessToken = genAccessToken(id);
+    const newAccessToken = await genAccessToken(id);
     //generate new refresh token which will replace the old one in redis
-    const newRefreshToken = genRefreshToken(id);
+    const newRefreshToken = await genRefreshToken(id);
 
-    return res
-      .status(200)
-      .json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
+    res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
+
+    return res.status(200).send({ token: newAccessToken });
   } catch (err) {
     return next(createError(500, err));
   }
@@ -67,10 +68,10 @@ async function httpRefreshToken(req, res, next) {
 //log out (/logout, clear refresh token)
 async function httpClearToken(req, res, next) {
   try {
-    const id = req.body.userId;
+    const id = req.tokenPayload.id;
 
     //delete refresh token in redis
-    client.del(id.toString(), function (err, response) {
+    await client.del(id.toString(), function (err, response) {
       if (response == 1) {
         console.log('Deleted Successfully!');
       } else {
@@ -78,7 +79,7 @@ async function httpClearToken(req, res, next) {
       }
     });
 
-    return res.status(200).send('user logged out');
+    return res.status(200).send('User logged out');
   } catch (err) {
     return next(createError(500, err));
   }
