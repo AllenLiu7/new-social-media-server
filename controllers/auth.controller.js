@@ -52,6 +52,7 @@ async function httpLoginUser(req, res, next) {
 async function httpRefreshToken(req, res, next) {
   try {
     const id = req.tokenPayload.id;
+
     //generate new access token
     const newAccessToken = await genAccessToken(id);
     //generate new refresh token which will replace the old one in redis

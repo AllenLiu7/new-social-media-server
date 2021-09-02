@@ -18,6 +18,6 @@ userRouter.get('/:id/followings', httpGetFollowings);
 userRouter.get('/:id/recommand_users', httpGetUnfollowUser);
 userRouter.put('/:id/follow', httpFollowUser);
 userRouter.put('/:id/unfollow', httpUnfollowUser);
-userRouter.put('/edit_profile', httpUpdateCurrentUser);
+userRouter.put('/edit_profile', verifyAccessToken, httpUpdateCurrentUser);
 
 module.exports = userRouter;

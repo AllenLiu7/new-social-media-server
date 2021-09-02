@@ -23,7 +23,7 @@ const verifyRefreshToken = (req, res, next) => {
     jwt.verify(token, 'theSecretRefreshKey', (err, payload) => {
       //console.log(err);
 
-      if (err) return res.status(403).send('Token is not valid');
+      if (err) return res.status(403).send('RefreshToken is not valid');
 
       //check if the token is in Redis
       //payload: {id: user._id, ...others}
@@ -56,7 +56,7 @@ const verifyRefreshToken = (req, res, next) => {
 //JWT token payload: {id: userId, ...others}
 const genAccessToken = (userId) => {
   return jwt.sign({ id: userId }, 'theSecretKey', {
-    expiresIn: '30s',
+    expiresIn: '10s',
   });
 };
 
