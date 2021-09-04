@@ -56,7 +56,7 @@ const verifyRefreshToken = (req, res, next) => {
 //JWT token payload: {id: userId, ...others}
 const genAccessToken = (userId) => {
   return jwt.sign({ id: userId }, 'theSecretKey', {
-    expiresIn: '10s',
+    expiresIn: '30s',
   });
 };
 
